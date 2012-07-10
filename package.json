@@ -1,0 +1,23 @@
+{
+  "author": "Elliot Foster <github@firetaco.com>"
+  , "name": "mocha-mongoose"
+  , "description": "Test helpers for using mocha with mongoose"
+  , "version": "0.0.2"
+  , "repository": {
+    "url": "https://github.com/elliotf/mocha-mongoose"
+  }
+  , "scripts": {
+    "test": "make test"
+  }
+  , "dependencies": {
+    "mongoose": "*"
+    , "mocha": "*"
+  }
+  , "devDependencies": {
+    "should": ">= 0.0.1"
+  }
+  , "optionalDependencies": {}
+  , "engines": {
+    "node": "*"
+  }
+}
