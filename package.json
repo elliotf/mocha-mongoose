@@ -10,11 +10,12 @@
     "test": "make test"
   }
   , "dependencies": {
-    "mongoose": "*"
-    , "mocha": "*"
+    "mongodb": "*"
   }
   , "devDependencies": {
     "should": ">= 0.0.1"
+    , "mongoose": "*"
+    , "mocha": "*"
   }
   , "optionalDependencies": {}
   , "engines": {

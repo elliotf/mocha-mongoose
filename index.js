@@ -1,25 +1,53 @@
-var mongoose = require('mongoose');
+var url        = require('url')
+  , mongodb    = require('mongodb')
+  , Db         = mongodb.Db
+  , Server     = mongodb.Server
+  , Connection = mongodb.Connection
+;
 
-var i = 0;
+module.exports = function(uriString) {
+  if ('function' == typeof uriString) {
+    throw new Error("Module being called to clean the db. Call the module with a mongodb url to get a cleaner function");
+  }
+  if (!uriString) {
+    console.log("!WARNING: no mongodb url provided.  Defaulting to mongo://localhost/test");
+    uriString = 'mongo://localhost/test';
+  }
+  var uri  = url.parse(uriString);
+  var host = uri.hostname || 'localhost';
+  var port = uri.port     || Connection.DEFAULT_PORT;
+  var name = uri.path     || 'test';
+  name = name.replace(/^[/]+/, '');
 
-beforeEach(function(done) {
-  console.log("cleaning: ", i++);
-  if (!mongoose.connection.db) {
-    mongoose.connect('mongodb://localhost/test', function(err){
-      if (err) throw err;
-      clearDB();
+  var server   = new Server(host, port, {});
+  var db       = new Db(name, server);
+  var dbIsOpen = false;
+
+  function beforeEachHandler(done) {
+    if (dbIsOpen) return clearCollections(done);
+
+    db.open(function(err, db) {
+      if (err) return done(err);
+
+      dbIsOpen = true;
+      clearCollections(done);
     });
-  } else {
-    clearDB();
   }
 
-  function clearDB() {
-    var numToDo = 0;
-    for (var kollection in mongoose.connection.collections) {
-      ++numToDo;
-      mongoose.connection.collections[kollection].remove(function(){
-        if (--numToDo === 0) done();
+  return beforeEachHandler;
+
+  function clearCollections(done) {
+    db.collections(function(err, collections){
+      if (err) return done(err);
+
+      var todo = collections.length;
+      if (!todo) return done();
+
+      collections.forEach(function(collection){
+        collection.remove({},{safe: true}, function(){
+          if (--todo == 0) done();
+        });
       });
-    }
+    });
   }
-});
+}
