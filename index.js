@@ -9,10 +9,12 @@ module.exports = function(uriString) {
   if ('function' == typeof uriString) {
     throw new Error("Module being called to clean the db. Call the module with a mongodb url to get a cleaner function");
   }
+
   if (!uriString) {
     console.log("!WARNING: no mongodb url provided.  Defaulting to mongo://localhost/test");
     uriString = 'mongo://localhost/test';
   }
+
   var uri  = url.parse(uriString);
   var host = uri.hostname || 'localhost';
   var port = uri.port     || Connection.DEFAULT_PORT;
@@ -32,6 +34,11 @@ module.exports = function(uriString) {
       dbIsOpen = true;
       clearCollections(done);
     });
+  }
+
+  if ('function' == typeof beforeEach && beforeEach.length > 0) {
+    // we're in a test suite that hopefully supports async operations
+    beforeEach(beforeEachHandler);
   }
 
   return beforeEachHandler;

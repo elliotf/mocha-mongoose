@@ -1,22 +1,23 @@
-var dbURI    = 'mongodb://localhost/mongodb-wiper'
-  , cleaner  = require('../index.js')
+// make it extremely unlikely that this test unintentionally drops someone's DB
+var uniqueId = 'c90b6960-0109-11e2-9595-00248c45df8a'
+  , dbURI    = 'mongodb://localhost/mongodb-wiper-test-' + uniqueId
+  , cleaner  = require('../index.js')(dbURI)
   , should   = require('should')
   , mongoose = require('mongoose')
   , Dummy    = mongoose.model('Dummy', new mongoose.Schema({a:Number}))
 ;
 
 describe("mongodb cleaner", function() {
-  describe("as a beforeEach handler", function() {
-    beforeEach(function(done) {
-      if (mongoose.connection.db) return done();
-      mongoose.connect(dbURI, function(err){
-        if (err) done(err);
-        done();
-      });
+  beforeEach(function(done) {
+    if (mongoose.connection.db) return done();
+    mongoose.connect(dbURI, function(err){
+      if (err) done(err);
+      done();
     });
+  });
 
-    beforeEach(function(done) {
-      cleaner(dbURI)(done);
+  describe("inside mocha", function() {
+    it("auto-registers itself as a beforeEach handler", function() {
     });
 
     it("allows normal db use", function(done) {
@@ -39,7 +40,7 @@ describe("mongodb cleaner", function() {
     it("throws an error", function(done) {
       var err;
       try {
-        cleaner(done)
+        require('../index.js')(done)
       } catch(e) {
         err = e;
       } finally {
