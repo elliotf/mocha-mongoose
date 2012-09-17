@@ -9,37 +9,56 @@ test helpers for using mongoose with mocha
 
 ## Example:
 
-    require('mocha-mongoose');
-    var mongoose = require('mongoose');
-    var should = require('should');
+    var dbURI    = 'mongodb://localhost/mongodb-wiper'
+      , cleaner  = require('mocha-mongoose')
+      , should   = require('should')
+      , mongoose = require('mongoose')
+      , Dummy    = mongoose.model('Dummy', new mongoose.Schema({a:Number}))
+    ;
 
-    var Dummy = mongoose.model('Dummy', new mongoose.Schema({a:Number}));
+    describe("mongodb cleaner", function() {
+      describe("as a beforeEach handler", function() {
+        beforeEach(function(done) {
+          if (mongoose.connection.db) return done();
+          mongoose.connect(dbURI, function(err){
+            if (err) done(err);
+            done();
+          });
+        });
 
-    describe("before hook", function() {
-      var id;
+        beforeEach(function(done) {
+          cleaner(dbURI)(done);
+        });
 
-      it("auto-connects to the DB if necessary", function(done) {
-        should.exist(mongoose.connection.db);
-
-        var dummy = new Dummy({a: 1})
-        dummy.save(function(err){
-          if (err) return done(err);
-
-          should.exist(dummy.id);
-
-          Dummy.findById(dummy.id, function(err, doc){
+        it("allows normal db use", function(done) {
+          new Dummy({a: 1}).save(function(err){
             if (err) return done(err);
-            should.exist(doc);
+            done();
+          });
+        });
+
+        it("empties the db between specs", function(done) {
+          Dummy.find({}, function(err, docs){
+            if (err) return done(err);
+            docs.length.should.equal(0);
             done();
           });
         });
       });
 
-      it("empties the DB between specs", function(done) {
-        Dummy.find({}, function(err, docs){
-          if (err) return done(err);
-          docs.length.should.equal(0);
-          done();
+      describe("when called with a callback instead of a url", function() {
+        it("throws an error", function(done) {
+          var err;
+          try {
+            cleaner(done)
+          } catch(e) {
+            err = e;
+          } finally {
+            should.exist(err);
+            err.message.should.match(/being called to clean/);
+            err.message.should.match(/with a mongodb url/);
+            done();
+          }
         });
       });
     });
