@@ -9,31 +9,36 @@ test helpers for using mongoose with mocha
 
 ## Example:
 
-    var dbURI    = 'mongodb://localhost/mongodb-wiper'
-      , cleaner  = require('mocha-mongoose')
+    var dbURI    = 'mongodb://localhost/some-app-test'
+      , cleaner  = require('../index.js')(dbURI)
       , should   = require('should')
       , mongoose = require('mongoose')
       , Dummy    = mongoose.model('Dummy', new mongoose.Schema({a:Number}))
     ;
 
     describe("mongodb cleaner", function() {
-      describe("as a beforeEach handler", function() {
+      describe("inside mocha", function() {
         beforeEach(function(done) {
           if (mongoose.connection.db) return done();
           mongoose.connect(dbURI, function(err){
-            if (err) done(err);
+            if (err) return done(err);
             done();
           });
         });
 
-        beforeEach(function(done) {
-          cleaner(dbURI)(done);
+        it("auto-registers itself as a beforeEach handler", function() {
         });
 
         it("allows normal db use", function(done) {
           new Dummy({a: 1}).save(function(err){
             if (err) return done(err);
-            done();
+
+            Dummy.find({}, function(err,docs){
+              if (err) return done(err);
+
+              docs.length.should.equal(1);
+              done();
+            });
           });
         });
 
@@ -50,7 +55,7 @@ test helpers for using mongoose with mocha
         it("throws an error", function(done) {
           var err;
           try {
-            cleaner(done)
+            require('../index.js')(done)
           } catch(e) {
             err = e;
           } finally {

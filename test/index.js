@@ -8,22 +8,28 @@ var uniqueId = 'c90b6960-0109-11e2-9595-00248c45df8a'
 ;
 
 describe("mongodb cleaner", function() {
-  beforeEach(function(done) {
-    if (mongoose.connection.db) return done();
-    mongoose.connect(dbURI, function(err){
-      if (err) done(err);
-      done();
-    });
-  });
-
   describe("inside mocha", function() {
+    beforeEach(function(done) {
+      if (mongoose.connection.db) return done();
+      mongoose.connect(dbURI, function(err){
+        if (err) return done(err);
+        done();
+      });
+    });
+
     it("auto-registers itself as a beforeEach handler", function() {
     });
 
     it("allows normal db use", function(done) {
       new Dummy({a: 1}).save(function(err){
         if (err) return done(err);
-        done();
+
+        Dummy.find({}, function(err,docs){
+          if (err) return done(err);
+
+          docs.length.should.equal(1);
+          done();
+        });
       });
     });
 
