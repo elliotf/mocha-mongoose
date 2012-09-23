@@ -59,9 +59,9 @@ describe("mongodb cleaner", function() {
     });
   });
 
-  describe(".clearCollections", function() {
+  describe(".clearDB", function() {
     it("is available", function() {
-      cleaner.clearCollections.should.be.a('function');
+      cleaner.clearDB.should.be.a('function');
     });
 
     it("clears the database when called", function(done) {
@@ -76,7 +76,7 @@ describe("mongodb cleaner", function() {
             cb();
           });
         }
-        , cleaner.clearCollections
+        , cleaner.clearDB
         , function(cb){
           Dummy.find({}, function(err, docs){
             should.not.exist(err);

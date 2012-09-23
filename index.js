@@ -41,7 +41,7 @@ module.exports = function(uriString) {
     beforeEach(beforeEachHandler);
   }
 
-  beforeEachHandler.clearCollections = function(done){
+  beforeEachHandler.clearDB = function(done){
     clearCollections(done);
   }
 
