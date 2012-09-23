@@ -1,8 +1,9 @@
 // make it extremely unlikely that this test unintentionally drops someone's DB
 var uniqueId = 'c90b6960-0109-11e2-9595-00248c45df8a'
   , dbURI    = 'mongodb://localhost/mongodb-wiper-test-' + uniqueId
-  , cleaner  = require('../index.js')(dbURI)
-  , should   = require('should')
+  , cleaner  = require('../index')(dbURI)
+  , should   = require('chai').should()
+  , async    = require('async')
   , mongoose = require('mongoose')
   , Dummy    = mongoose.model('Dummy', new mongoose.Schema({a:Number}))
 ;
@@ -55,6 +56,35 @@ describe("mongodb cleaner", function() {
         err.message.should.match(/with a mongodb url/);
         done();
       }
+    });
+  });
+
+  describe(".clearCollections", function() {
+    it("is available", function() {
+      cleaner.clearCollections.should.be.a('function');
+    });
+
+    it("clears the database when called", function(done) {
+      async.series([
+        function(cb){
+          new Dummy({a: 1}).save(cb);
+        }
+        ,function(cb){
+          Dummy.find({}, function(err, docs){
+            should.not.exist(err);
+            docs.length.should.equal(1);
+            cb();
+          });
+        }
+        , cleaner.clearCollections
+        , function(cb){
+          Dummy.find({}, function(err, docs){
+            should.not.exist(err);
+            docs.length.should.equal(0);
+            cb();
+          });
+        }
+      ], done);
     });
   });
 });

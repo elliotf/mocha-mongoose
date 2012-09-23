@@ -1,24 +1,26 @@
 {
-  "author": "Elliot Foster <github@firetaco.com>"
-  , "name": "mocha-mongoose"
-  , "description": "Test helpers for using mongodb with mocha"
-  , "version": "0.0.3"
-  , "repository": {
+  "author": "Elliot Foster <github@firetaco.com>",
+  "name": "mocha-mongoose",
+  "description": "Test helpers for using mongodb with mocha",
+  "version": "0.0.3",
+  "repository": {
     "url": "https://github.com/elliotf/mocha-mongoose"
-  }
-  , "scripts": {
+  },
+  "scripts": {
     "test": "make test"
-  }
-  , "dependencies": {
+  },
+  "dependencies": {
     "mongodb": "*"
-  }
-  , "devDependencies": {
-    "should": ">= 0.0.1"
-    , "mongoose": "*"
-    , "mocha": "*"
-  }
-  , "optionalDependencies": {}
-  , "engines": {
+  },
+  "devDependencies": {
+    "mongoose": "*",
+    "mocha": "*",
+    "nodemon": "~0.6.23",
+    "chai": "~1.2.0",
+    "async": "~0.1.22"
+  },
+  "optionalDependencies": {},
+  "engines": {
     "node": "*"
   }
 }
