@@ -5,13 +5,15 @@ var url        = require('url')
   , Connection = mongodb.Connection
 ;
 
-module.exports = function(uriString) {
+module.exports = function(uriString, options) {
+  options = options || {};
+
   if ('function' == typeof uriString) {
     throw new Error("Module being called to clean the db. Call the module with a mongodb url to get a cleaner function");
   }
 
   if (!uriString) {
-    console.log("!WARNING: no mongodb url provided.  Defaulting to mongo://localhost/test");
+    console.warn("!WARNING: no mongodb url provided.  Defaulting to mongo://localhost/test");
     uriString = 'mongo://localhost/test';
   }
 
@@ -25,38 +27,38 @@ module.exports = function(uriString) {
   var db       = new Db(name, server, { safe: true });
   var dbIsOpen = false;
 
-  function beforeEachHandler(done) {
-    if (dbIsOpen) return clearCollections(done);
+  if (!options.noClear) {
+    if ('function' == typeof beforeEach && beforeEach.length > 0) {
+      // we're in a test suite that hopefully supports async operations
+      beforeEach(clearDB);
+    }
+  }
+
+  return function(done) {
+    clearDB(done);
+  }
+
+  function clearDB(cb) {
+    if (dbIsOpen) return clearCollections(cb);
 
     db.open(function(err, db) {
-      if (err) return done(err);
+      if (err) return cb(err);
 
       dbIsOpen = true;
-      clearCollections(done);
+      clearCollections(cb);
     });
   }
 
-  if ('function' == typeof beforeEach && beforeEach.length > 0) {
-    // we're in a test suite that hopefully supports async operations
-    beforeEach(beforeEachHandler);
-  }
-
-  beforeEachHandler.clearDB = function(done){
-    clearCollections(done);
-  }
-
-  return beforeEachHandler;
-
-  function clearCollections(done) {
+  function clearCollections(cb) {
     db.collections(function(err, collections){
-      if (err) return done(err);
+      if (err) return cb(err);
 
       var todo = collections.length;
-      if (!todo) return done();
+      if (!todo) return cb();
 
       collections.forEach(function(collection){
         collection.remove({},{safe: true}, function(){
-          if (--todo == 0) done();
+          if (--todo == 0) cb();
         });
       });
     });

@@ -1,45 +1,23 @@
 // make it extremely unlikely that this test unintentionally drops someone's DB
 var uniqueId = 'c90b6960-0109-11e2-9595-00248c45df8a'
   , dbURI    = 'mongodb://localhost/mongodb-wiper-test-' + uniqueId
-  , cleaner  = require('../index')(dbURI)
   , should   = require('chai').should()
   , async    = require('async')
   , mongoose = require('mongoose')
   , Dummy    = mongoose.model('Dummy', new mongoose.Schema({a:Number}))
 ;
 
-describe("mongodb cleaner", function() {
-  describe("inside mocha", function() {
-    beforeEach(function(done) {
-      if (mongoose.connection.db) return done();
-      mongoose.connect(dbURI, function(err){
-        if (err) return done(err);
-        done();
-      });
-    });
 
-    it("auto-registers itself as a beforeEach handler", function() {
-    });
+describe("clearDB", function() {
+  var clearDB, options;
 
-    it("allows normal db use", function(done) {
-      new Dummy({a: 1}).save(function(err){
-        if (err) return done(err);
+  beforeEach(function(done) {
+    options = {noClear: true};
 
-        Dummy.find({}, function(err,docs){
-          if (err) return done(err);
-
-          docs.length.should.equal(1);
-          done();
-        });
-      });
-    });
-
-    it("empties the db between specs", function(done) {
-      Dummy.find({}, function(err, docs){
-        if (err) return done(err);
-        docs.length.should.equal(0);
-        done();
-      });
+    if (mongoose.connection.db) return done();
+    mongoose.connect(dbURI, function(err){
+      if (err) return done(err);
+      done();
     });
   });
 
@@ -47,7 +25,7 @@ describe("mongodb cleaner", function() {
     it("throws an error", function(done) {
       var err;
       try {
-        require('../index.js')(done)
+        require('../index.js')(done, options)
       } catch(e) {
         err = e;
       } finally {
@@ -60,8 +38,12 @@ describe("mongodb cleaner", function() {
   });
 
   describe(".clearDB", function() {
+    beforeEach(function() {
+      clearDB = require('../index')(dbURI, options)
+    });
+
     it("is available", function() {
-      cleaner.clearDB.should.be.a('function');
+      clearDB.should.be.a('function');
     });
 
     it("clears the database when called", function(done) {
@@ -76,7 +58,7 @@ describe("mongodb cleaner", function() {
             cb();
           });
         }
-        , cleaner.clearDB
+        , clearDB
         , function(cb){
           Dummy.find({}, function(err, docs){
             should.not.exist(err);
@@ -85,6 +67,56 @@ describe("mongodb cleaner", function() {
           });
         }
       ], done);
+    });
+  });
+
+  describe("inside mocha", function() {
+    function itAllowsNormalUse() {
+      it("allows normal db use", function(done) {
+        new Dummy({a: 2}).save(function(err){
+          if (err) return done(err);
+
+          Dummy.find({}, function(err,docs){
+            if (err) return done(err);
+
+            docs.length.should.equal(1);
+            done();
+          });
+        });
+      });
+    }
+
+    describe("when required with the noClear option", function() {
+      beforeEach(function() {
+        clearDB = require('../index')(dbURI, options)
+      });
+
+      itAllowsNormalUse();
+
+      it("does not clear out the DB automatically", function(done) {
+        Dummy.find({}, function(err, docs){
+          if (err) return done(err);
+          docs.length.should.equal(1);
+
+          clearDB(done);
+        });
+      });
+    });
+
+    describe("when required without the noClear option", function() {
+      beforeEach(function() {
+        clearDB = require('../index')(dbURI)
+      });
+
+      itAllowsNormalUse();
+
+      it("automatically empties the db between specs", function(done) {
+        Dummy.find({}, function(err, docs){
+          if (err) return done(err);
+          docs.length.should.equal(0);
+          done();
+        });
+      });
     });
   });
 });
