@@ -1,7 +1,7 @@
 mocha-mongoose
 ==============
 
-test helpers for using mongoose with mocha.
+Test helpers for using mongoose with mocha.
 
 See the example spec (copied below) for more details.
 
