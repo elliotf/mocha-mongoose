@@ -22,7 +22,7 @@ module.exports = function(uriString) {
   name = name.replace(/^[/]+/, '');
 
   var server   = new Server(host, port, {});
-  var db       = new Db(name, server);
+  var db       = new Db(name, server, { safe: true });
   var dbIsOpen = false;
 
   function beforeEachHandler(done) {
