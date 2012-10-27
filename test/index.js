@@ -15,26 +15,7 @@ describe("clearDB", function() {
     options = {noClear: true};
 
     if (mongoose.connection.db) return done();
-    mongoose.connect(dbURI, function(err){
-      if (err) return done(err);
-      done();
-    });
-  });
-
-  describe("when called with a callback instead of a url", function() {
-    it("throws an error", function(done) {
-      var err;
-      try {
-        require('../index.js')(done, options)
-      } catch(e) {
-        err = e;
-      } finally {
-        should.exist(err);
-        err.message.should.match(/being called to clean/);
-        err.message.should.match(/with a mongodb url/);
-        done();
-      }
-    });
+    mongoose.connect(dbURI, done);
   });
 
   describe(".clearDB", function() {
@@ -54,7 +35,7 @@ describe("clearDB", function() {
         ,function(cb){
           Dummy.find({}, function(err, docs){
             should.not.exist(err);
-            docs.length.should.equal(1);
+            docs.length.should.be.above(0);
             cb();
           });
         }
@@ -67,6 +48,22 @@ describe("clearDB", function() {
           });
         }
       ], done);
+    });
+  });
+
+  describe("when called with a callback instead of a url", function() {
+    it("throws an error", function(done) {
+      var err;
+      try {
+        require('../index')(done, options)
+      } catch(e) {
+        err = e;
+      } finally {
+        should.exist(err);
+        err.message.should.match(/being called to clean/);
+        err.message.should.match(/with a mongodb url/);
+        done();
+      }
     });
   });
 

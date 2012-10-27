@@ -1,69 +1,70 @@
 mocha-mongoose
 ==============
 
-test helpers for using mongoose with mocha
+test helpers for using mongoose with mocha.
+
+See the example spec (copied below) for more details.
 
 ## Installation
 
     $ npm install mocha-mongoose
 
-## Example:
+## Example usage of automatically clearing the DB between specs:
 
-    var dbURI    = 'mongodb://localhost/some-app-test'
-      , cleaner  = require('../index.js')(dbURI)
-      , should   = require('should')
+This is a copy of example/test.js
+
+    var dbURI    = 'mongodb://localhost/demo-app-clearing-db'
+      , should   = require('chai').should()
       , mongoose = require('mongoose')
       , Dummy    = mongoose.model('Dummy', new mongoose.Schema({a:Number}))
+      , clearDB  = require('mocha-mongoose')(dbURI)
     ;
 
-    describe("mongodb cleaner", function() {
-      describe("inside mocha", function() {
-        beforeEach(function(done) {
-          if (mongoose.connection.db) return done();
-          mongoose.connect(dbURI, function(err){
+    describe("Example spec for a model", function() {
+      beforeEach(function(done) {
+        if (mongoose.connection.db) return done();
+
+        mongoose.connect(dbURI, done);
+      });
+
+      it("can be saved", function(done) {
+        new Dummy({a: 1}).save(done);
+      });
+
+      it("can be listed", function(done) {
+        new Dummy({a: 1}).save(function(err, model){
+          if (err) return done(err);
+
+          new Dummy({a: 2}).save(function(err, model){
             if (err) return done(err);
-            done();
-          });
-        });
 
-        it("auto-registers itself as a beforeEach handler", function() {
-        });
-
-        it("allows normal db use", function(done) {
-          new Dummy({a: 1}).save(function(err){
-            if (err) return done(err);
-
-            Dummy.find({}, function(err,docs){
+            Dummy.find({}, function(err, docs){
               if (err) return done(err);
 
-              docs.length.should.equal(1);
+              // without clearing the DB between specs, this would be 3
+              docs.length.should.equal(2);
               done();
             });
           });
         });
-
-        it("empties the db between specs", function(done) {
-          Dummy.find({}, function(err, docs){
-            if (err) return done(err);
-            docs.length.should.equal(0);
-            done();
-          });
-        });
       });
 
-      describe("when called with a callback instead of a url", function() {
-        it("throws an error", function(done) {
-          var err;
-          try {
-            require('../index.js')(done)
-          } catch(e) {
-            err = e;
-          } finally {
-            should.exist(err);
-            err.message.should.match(/being called to clean/);
-            err.message.should.match(/with a mongodb url/);
-            done();
-          }
+      it("can clear the DB on demand", function(done) {
+        new Dummy({a: 5}).save(function(err, model){
+          if (err) return done(err);
+
+          clearDB(function(err){
+            if (err) return done(err);
+
+            Dummy.find({}, function(err, docs){
+              if (err) return done(err);
+
+              console.log(docs);
+
+              docs.length.should.equal(0);
+              done();
+            });
+          });
         });
       });
     });
