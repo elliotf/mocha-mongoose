@@ -20,7 +20,7 @@ describe("clearDB", function() {
 
   describe(".clearDB", function() {
     beforeEach(function() {
-      clearDB = require('../index')(dbURI, options)
+      clearDB = require('../index')(dbURI, options);
     });
 
     it("is available", function() {
@@ -55,7 +55,7 @@ describe("clearDB", function() {
     it("throws an error", function(done) {
       var err;
       try {
-        require('../index')(done, options)
+        require('../index')(done, options);
       } catch(e) {
         err = e;
       } finally {
@@ -85,7 +85,7 @@ describe("clearDB", function() {
 
     describe("when required with the noClear option", function() {
       beforeEach(function() {
-        clearDB = require('../index')(dbURI, options)
+        clearDB = require('../index')(dbURI, options);
       });
 
       itAllowsNormalUse();
@@ -102,7 +102,7 @@ describe("clearDB", function() {
 
     describe("when required without the noClear option", function() {
       beforeEach(function() {
-        clearDB = require('../index')(dbURI)
+        clearDB = require('../index')(dbURI);
       });
 
       itAllowsNormalUse();
