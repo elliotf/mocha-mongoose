@@ -1,15 +1,12 @@
-var url        = require('url')
-  , mongodb    = require('mongodb')
-  , Db         = mongodb.Db
-  , Server     = mongodb.Server
-  , Connection = mongodb.Connection
+var url    = require('url')
+  , client = require('mongodb').MongoClient
 ;
 
 module.exports = function(uriString, options) {
   options = options || {};
 
-  if ('function' == typeof uriString) {
-    throw new Error("Module being called to clean the db. Call the module with a mongodb url to get a cleaner function");
+  if (typeof uriString == 'function') {
+    throw new Error("Module being called to clean the db.  Please call the module with a mongodb url.");
   }
 
   if (!uriString) {
@@ -17,15 +14,7 @@ module.exports = function(uriString, options) {
     uriString = 'mongo://localhost/test';
   }
 
-  var uri  = url.parse(uriString);
-  var host = uri.hostname || 'localhost';
-  var port = uri.port     || Connection.DEFAULT_PORT;
-  var name = uri.path     || 'test';
-  name = name.replace(/^[/]+/, '');
-
-  var server   = new Server(host, port, {});
-  var db       = new Db(name, server, { safe: true });
-  var dbIsOpen = false;
+  var db = null;
 
   if (!options.noClear) {
     if ('function' == typeof beforeEach && beforeEach.length > 0) {
@@ -36,15 +25,16 @@ module.exports = function(uriString, options) {
 
   return function(done) {
     clearDB(done);
-  }
+  };
 
   function clearDB(cb) {
-    if (dbIsOpen) return clearCollections(cb);
+    if (db) return clearCollections(cb);
 
-    db.open(function(err, db) {
+    client.connect(uriString, function(err, newDb){
       if (err) return cb(err);
 
-      dbIsOpen = true;
+      db = newDb;
+
       clearCollections(cb);
     });
   }
@@ -58,9 +48,9 @@ module.exports = function(uriString, options) {
 
       collections.forEach(function(collection){
         collection.remove({},{safe: true}, function(){
-          if (--todo == 0) cb();
+          if (--todo === 0) cb();
         });
       });
     });
   }
-}
+};

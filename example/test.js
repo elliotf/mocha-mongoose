@@ -47,8 +47,6 @@ describe("Example spec for a model", function() {
         Dummy.find({}, function(err, docs){
           if (err) return done(err);
 
-          console.log(docs);
-
           docs.length.should.equal(0);
           done();
         });
