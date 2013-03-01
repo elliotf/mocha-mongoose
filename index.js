@@ -23,6 +23,11 @@ module.exports = function(uriString, options) {
     }
   }
 
+  var skipCollections = {};
+  (options.skipCollections || []).forEach(function(collectionName){
+    skipCollections[collectionName] = true;
+  });
+
   return function(done) {
     clearDB(done);
   };
@@ -47,6 +52,8 @@ module.exports = function(uriString, options) {
       if (!todo) return cb();
 
       collections.forEach(function(collection){
+        if (skipCollections[collection.collectionName]) return --todo;
+
         collection.remove({},{safe: true}, function(){
           if (--todo === 0) cb();
         });
