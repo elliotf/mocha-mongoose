@@ -1,8 +1,7 @@
 // make it extremely unlikely that this test unintentionally drops someone's DB
 var uniqueId = 'c90b6960-0109-11e2-9595-00248c45df8a'
   , dbURI    = 'mongodb://localhost/mongodb-wiper-test-' + uniqueId
-  , should   = require('chai').should()
-  , async    = require('async')
+  , expect   = require('chai').expect
   , mongoose = require('mongoose')
   , Dummy    = mongoose.model('Dummy', new mongoose.Schema({a:Number}))
 ;
@@ -24,30 +23,25 @@ describe("clearDB", function() {
     });
 
     it("is available", function() {
-      clearDB.should.be.a('function');
+      expect(clearDB).to.be.a('function');
     });
 
     it("clears the database when called", function(done) {
-      async.series([
-        function(cb){
-          new Dummy({a: 1}).save(cb);
-        }
-        ,function(cb){
-          Dummy.find({}, function(err, docs){
-            should.not.exist(err);
-            docs.length.should.be.above(0);
-            cb();
+      Dummy.create({a: 1}, function(err){
+        if (err) return done(err);
+
+        Dummy.find({}, function(err, docs){
+          expect(err).to.not.exist;
+          expect(docs).to.have.length.above(0);
+          clearDB(function(err){
+            Dummy.find({}, function(err, docs){
+              expect(err).to.not.exist;
+              expect(docs).to.have.length(0);
+              done();
+            });
           });
-        }
-        , clearDB
-        , function(cb){
-          Dummy.find({}, function(err, docs){
-            should.not.exist(err);
-            docs.length.should.equal(0);
-            cb();
-          });
-        }
-      ], done);
+        });
+      });
     });
   });
 
@@ -59,9 +53,9 @@ describe("clearDB", function() {
       } catch(e) {
         err = e;
       } finally {
-        should.exist(err);
-        err.message.should.match(/being called to clean/);
-        err.message.should.match(/with a mongodb url/);
+        expect(err).to.exist;
+        expect(err.message).to.match(/being called to clean/);
+        expect(err.message).to.match(/with a mongodb url/);
         done();
       }
     });
@@ -76,7 +70,7 @@ describe("clearDB", function() {
           Dummy.find({}, function(err,docs){
             if (err) return done(err);
 
-            docs.length.should.equal(1);
+            expect(docs.length).to.equal(1);
             done();
           });
         });
@@ -93,7 +87,7 @@ describe("clearDB", function() {
       it("does not clear out the DB automatically", function(done) {
         Dummy.find({}, function(err, docs){
           if (err) return done(err);
-          docs.length.should.equal(1);
+          expect(docs.length).to.equal(1);
 
           clearDB(done);
         });
@@ -110,7 +104,7 @@ describe("clearDB", function() {
       it("automatically empties the db between specs", function(done) {
         Dummy.find({}, function(err, docs){
           if (err) return done(err);
-          docs.length.should.equal(0);
+          expect(docs.length).to.equal(0);
           done();
         });
       });
