@@ -130,6 +130,7 @@ describe("clearDB", function() {
 
       it("does not clear out those collections", function(done) {
         clearDB(function(err){
+          if (err) return done(err);
           Dummy.find({}, function(err, docs){
             if (err) return done(err);
             expect(docs.length).to.equal(1);

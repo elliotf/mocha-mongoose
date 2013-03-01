@@ -2,7 +2,7 @@
   "author": "Elliot Foster <github@firetaco.com>",
   "name": "mocha-mongoose",
   "description": "Test helpers for using mongodb with mocha",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "repository": {
     "url": "https://github.com/elliotf/mocha-mongoose"
   },
