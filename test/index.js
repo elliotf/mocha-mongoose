@@ -111,6 +111,12 @@ describe("clearDB", function() {
     });
   });
 
+  describe("system collections", function() {
+    it("does not clear out system collections", function() {
+      // well, this kind of sucks...  How do I test this?
+    });
+  });
+
   describe("option: skipCollections", function() {
     beforeEach(function(done) {
       Dummy.create({a: 2},done);

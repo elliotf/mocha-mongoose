@@ -52,6 +52,7 @@ module.exports = function(uriString, options) {
       if (!todo) return cb();
 
       collections.forEach(function(collection){
+        if (collection.collectionName.match(/^system\./)) return --todo;
         if (skipCollections[collection.collectionName]) return --todo;
 
         collection.remove({},{safe: true}, function(){

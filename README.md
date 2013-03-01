@@ -11,17 +11,6 @@ See the example spec (copied below) for more details.
 
     $ npm install mocha-mongoose
 
-## Authenticated Connections
-
-If you are using authenticated mongodb connections, you will want to avoid clearing the 'system.users' collection:
-
-    var dbURI    = 'mongodb://user:password@db-name.tld/demo-app-clearing-db';
-    require('mocha-mongoose')(dbURI, {
-      skipCollections: ['system.users']
-    });
-
-If you clear the system.users collection, you will not be able to reconnect to your database, since your user will have been deleted.
-
 ## Example usage of automatically clearing the DB between specs:
 
 This is a copy of example/test.js
