@@ -23,11 +23,6 @@ module.exports = function(uriString, options) {
     }
   }
 
-  var skipCollections = {};
-  (options.skipCollections || []).forEach(function(collectionName){
-    skipCollections[collectionName] = true;
-  });
-
   return function(done) {
     clearDB(done);
   };
@@ -53,7 +48,6 @@ module.exports = function(uriString, options) {
 
       collections.forEach(function(collection){
         if (collection.collectionName.match(/^system\./)) return --todo;
-        if (skipCollections[collection.collectionName]) return --todo;
 
         collection.remove({},{safe: true}, function(){
           if (--todo === 0) cb();

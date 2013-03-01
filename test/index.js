@@ -116,28 +116,4 @@ describe("clearDB", function() {
       // well, this kind of sucks...  How do I test this?
     });
   });
-
-  describe("option: skipCollections", function() {
-    beforeEach(function(done) {
-      Dummy.create({a: 2},done);
-    });
-
-    describe("when provided as an array", function() {
-      beforeEach(function() {
-        options.skipCollections = ['dummies'];
-        clearDB = require('../index')(dbURI, options);
-      });
-
-      it("does not clear out those collections", function(done) {
-        clearDB(function(err){
-          if (err) return done(err);
-          Dummy.find({}, function(err, docs){
-            if (err) return done(err);
-            expect(docs.length).to.equal(1);
-            done();
-          });
-        });
-      });
-    });
-  });
 });
