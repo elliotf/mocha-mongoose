@@ -6,7 +6,7 @@ var dbURI    = 'mongodb://localhost/demo-app-clearing-db'
 
   , clearDB  = require('../index')(dbURI, {noClear: true})
 // Normally, this is:
-//, clearDB  = require('mocha-mongoose')(dbURI)
+//, clearDB  = require('mocha-mongoose')(dbURI, {noClear: true})
 ;
 
 describe("Example spec for a model", function() {
