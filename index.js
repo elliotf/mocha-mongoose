@@ -30,30 +30,30 @@ module.exports = function(uriString, options) {
     clearDB(done);
   };
 
-  function clearDB(cb) {
-    if (db) return clearCollections(cb);
+  function clearDB(done) {
+    if (db) return clearCollections(done);
 
     client.connect(uriString, function(err, newDb){
-      if (err) return cb(err);
+      if (err) return done(err);
 
       db = newDb;
 
-      clearCollections(cb);
+      clearCollections(done);
     });
   }
 
-  function clearCollections(cb) {
+  function clearCollections(done) {
     db.collections(function(err, collections){
-      if (err) return cb(err);
+      if (err) return done(err);
 
       var todo = collections.length;
-      if (!todo) return cb();
+      if (!todo) return done();
 
       collections.forEach(function(collection){
         if (collection.collectionName.match(/^system\./)) return --todo;
 
         collection.remove({},{safe: true}, function(){
-          if (--todo === 0) cb();
+          if (--todo === 0) done();
         });
       });
     });
