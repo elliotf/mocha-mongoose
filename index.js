@@ -2,6 +2,8 @@ var url    = require('url')
   , client = require('mongodb').MongoClient
 ;
 
+var beforeEachRegistered = false;
+
 module.exports = function(uriString, options) {
   options = options || {};
 
@@ -16,10 +18,11 @@ module.exports = function(uriString, options) {
 
   var db = null;
 
-  if (!options.noClear) {
+  if (!options.noClear && !beforeEachRegistered) {
     if ('function' == typeof beforeEach && beforeEach.length > 0) {
       // we're in a test suite that hopefully supports async operations
       beforeEach(clearDB);
+      beforeEachRegistered = true;
     }
   }
 
