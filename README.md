@@ -9,7 +9,15 @@ See the example spec (copied below) for more details.
 
 ## Installation
 
+1. install via npm
+
     $ npm install mocha-mongoose
+
+1. require mocha-mongoose in your spec helper (easier) or in each spec file
+
+    require('mocha-mongoose')('mongodb://your-mongodb-url-here');
+
+1. mocha-mongoose will automatically clear all of your collections before each spec run
 
 ## Example usage of automatically clearing the DB between specs:
 
