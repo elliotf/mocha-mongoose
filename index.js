@@ -53,7 +53,9 @@ module.exports = function(uriString, options) {
         if (collection.collectionName.match(/^system\./)) return --todo;
 
         collection.remove({},{safe: true}, function(){
-          if (--todo === 0) done();
+          collection.dropAllIndexes(function() {
+            if (--todo === 0) done();
+          });
         });
       });
     });
