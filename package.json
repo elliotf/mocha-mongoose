@@ -2,13 +2,15 @@
   "author": "Elliot Foster <github@firetaco.com>",
   "name": "mocha-mongoose",
   "description": "Test helpers for using mongodb with mocha",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
+    "type": "git",
     "url": "https://github.com/elliotf/mocha-mongoose"
   },
   "scripts": {
     "test": "make test"
   },
+  "license": "MIT",
   "peerDependencies": {
     "mongodb": "~1",
     "mocha": "~1"
