@@ -16,7 +16,7 @@
     "mocha": ">=1.0.0"
   },
   "devDependencies": {
-    "mocha": "~1",
+    "mocha": ">= 1.0.0",
     "mongodb": "~1",
     "mongoose": "~3",
     "nodemon": "~0",
