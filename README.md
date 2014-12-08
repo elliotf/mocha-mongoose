@@ -5,7 +5,8 @@ Test helpers for using mongoose with mocha.
 
 See the example spec (copied below) for more details.
 
-[![Build Status](https://secure.travis-ci.org/elliotf/mocha-mongoose.png)](http://travis-ci.org/elliotf/mocha-mongoose)
+[![Travis-CI Build Status](https://secure.travis-ci.org/elliotf/mocha-mongoose.png)](http://travis-ci.org/elliotf/mocha-mongoose)
+[![Drone.io Build Status](https://drone.io/github.com/elliotf/mocha-mongoose/status.png)](https://drone.io/github.com/elliotf/mocha-mongoose/latest)
 
 ## Installation
 
