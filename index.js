@@ -12,8 +12,8 @@ module.exports = function(uriString, options) {
   }
 
   if (!uriString) {
-    console.warn("!WARNING: no mongodb url provided.  Defaulting to mongo://localhost/test");
-    uriString = 'mongo://localhost/test';
+    console.warn("!WARNING: no mongodb url provided.  Defaulting to mongodb://localhost/test");
+    uriString = 'mongodb://localhost/test';
   }
 
   var db = null;
