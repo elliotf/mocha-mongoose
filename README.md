@@ -24,6 +24,7 @@ See the example spec (copied below) for more details.
 
 This is a copy of example/test.js
 
+```javascript
     var dbURI    = 'mongodb://localhost/demo-app-clearing-db'
       , should   = require('chai').should()
       , mongoose = require('mongoose')
@@ -79,11 +80,13 @@ This is a copy of example/test.js
         });
       });
     });
+```
 
 ## Example usage of manually clearing the DB:
 
 This is a copy of example/manual.js
 
+```javascript
     var dbURI    = 'mongodb://localhost/demo-app-clearing-db'
       , expect   = require('chai').expect
       , mongoose = require('mongoose')
@@ -137,3 +140,4 @@ This is a copy of example/manual.js
         });
       });
     });
+```
