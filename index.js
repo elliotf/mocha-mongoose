@@ -3,6 +3,7 @@ var url    = require('url')
 ;
 
 var beforeEachRegistered = false;
+var afterHookRegistered = false;
 
 module.exports = function(uriString, options) {
   options = options || {};
@@ -23,6 +24,14 @@ module.exports = function(uriString, options) {
       // we're in a test suite that hopefully supports async operations
       beforeEach(clearDB);
       beforeEachRegistered = true;
+    }
+  }
+
+  if (!options.noClear && !afterHookRegistered) {
+    if ('function' == typeof after && after.length > 0) {
+      // we're in a test suite that hopefully supports async operations
+      after(closeDB);
+      afterHookRegistered = true;
     }
   }
 
@@ -57,5 +66,9 @@ module.exports = function(uriString, options) {
         });
       });
     });
+  }
+
+  function closeDB() {
+    db.close();
   }
 };
