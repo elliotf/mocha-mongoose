@@ -4,6 +4,7 @@ var uniqueId = 'c90b6960-0109-11e2-9595-00248c45df8a'
   , expect   = require('chai').expect
   , mongoose = require('mongoose')
   , Dummy    = mongoose.model('Dummy', new mongoose.Schema({a:Number}))
+  , ImmortalDummy = mongoose.model('ImmortalDummy', new mongoose.Schema({a:Number}))
 ;
 
 
@@ -37,6 +38,39 @@ describe("clearDB", function() {
             Dummy.find({}, function(err, docs){
               expect(err).to.not.exist;
               expect(docs).to.have.length(0);
+              done();
+            });
+          });
+        });
+      });
+    });
+
+    describe("when required with the skip option", function() {
+      beforeEach(function(done) {
+        options.skip = ['immortaldummies']
+        clearDB = require('../index')(dbURI, options);
+
+        Dummy.create({a: 1}, function(err){
+          if (err) return done(err);
+
+          ImmortalDummy.create({a: 1}, function(err){
+            if (err) return done(err);
+
+            done();
+          });
+        });
+      });
+
+      it("does not clear the skipped collections", function(done) {
+        clearDB(function(err){
+          Dummy.find({}, function(err, docs){
+            expect(err).to.not.exist;
+            expect(docs).to.have.length(0);
+
+            ImmortalDummy.find({}, function(err, docs){
+              expect(err).to.not.exist;
+              expect(docs).to.have.length.above(0);
+
               done();
             });
           });

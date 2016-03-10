@@ -60,6 +60,7 @@ module.exports = function(uriString, options) {
 
       collections.forEach(function(collection){
         if (collection.collectionName.match(/^system\./)) return --todo;
+        if (options.skip instanceof Array && options.skip.indexOf(collection.collectionName) > -1) return --todo;
 
         collection.remove({},{safe: true}, function(){
           if (--todo === 0) done();
