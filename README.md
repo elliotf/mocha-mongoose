@@ -19,6 +19,8 @@ See the example spec (copied below) for more details.
     require('mocha-mongoose')('mongodb://your-mongodb-url-here');
 
 1. mocha-mongoose will automatically clear all of your collections before each spec run
+1. optionally provide a `skip` option to tell mocha-mongoose not to clear specific collections.
+    require('mocha-mongoose')(dbURI, { skip: ['collectionname1', 'collectionname2'] });
 
 ## Example usage of automatically clearing the DB between specs:
 
