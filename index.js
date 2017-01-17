@@ -63,7 +63,9 @@ module.exports = function(uriString, options) {
         if (options.skip instanceof Array && options.skip.indexOf(collection.collectionName) > -1) return --todo;
 
         collection.remove({},{safe: true}, function(){
-          if (--todo === 0) done();
+          collection.dropAllIndexes(function() {
+            if (--todo === 0) done();
+          });
         });
       });
     });
