@@ -46,6 +46,7 @@ module.exports = function(uriString, options) {
       if (err) return done(err);
 
       db = newDb;
+      module.exports.db = db;
 
       clearCollections(done);
     });
