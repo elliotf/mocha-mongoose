@@ -19,7 +19,7 @@
     "chai": ">=1.0.0",
     "mocha": ">= 1.0.0",
     "mongodb": ">=1.0.0",
-    "mongoose": ">=3.0.0",
+    "mongoose": "^3.0.0",
     "nodemon": "~0"
   },
   "optionalDependencies": {
