@@ -13,7 +13,7 @@
   "license": "MIT",
   "peerDependencies": {
     "mocha": ">=1.0.0",
-    "mongodb": ">=1.0.0"
+    "mongodb": ">=1.0.0, <3"
   },
   "devDependencies": {
     "chai": ">=1.0.0",
